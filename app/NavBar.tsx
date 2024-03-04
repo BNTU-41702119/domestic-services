@@ -3,7 +3,7 @@
 import { Skeleton } from "@/app/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillBug } from "react-icons/ai";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
@@ -15,6 +15,8 @@ import {
   Flex,
   Text,
 } from "@radix-ui/themes";
+import axios from "axios";
+import { User } from "@prisma/client";
 
 const NavBar = () => {
   return (
@@ -22,7 +24,7 @@ const NavBar = () => {
       <Container>
         <Flex justify="between">
           <Flex align="center" gap="3">
-            <Link href="/">
+            <Link href="/" className="text-3xl">
               <AiFillBug />
             </Link>
             <NavLinks />
@@ -38,12 +40,12 @@ const NavLinks = () => {
   const currentPath = usePathname();
 
   const links = [
-    { label: "Dashboard", href: "/" },
-    { label: "Issues", href: "/issues/list" },
+    { label: "Информационная панель", href: "/dashboard" },
+    { label: "Заказы", href: "/issues/list" },
   ];
 
   return (
-    <ul className="flex space-x-6">
+    <ul className="flex space-x-6 text-xl">
       {links.map((link) => (
         <li key={link.href}>
           <Link
@@ -63,13 +65,21 @@ const NavLinks = () => {
 
 const AuthStatus = () => {
   const { status, data: session } = useSession();
+  const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    if (session) {
+      axios.get('/api/users/me')
+        .then((res) => setUser(res.data));
+    }
+  }, [session]);
+  
   if (status === "loading") return <Skeleton width="3rem" />;
 
   if (status === "unauthenticated")
     return (
-      <Link className="nav-link" href="/api/auth/signin">
-        Login
+      <Link className="nav-link text-xl" href="/api/auth/signin">
+        Войти
       </Link>
     );
 
@@ -90,9 +100,18 @@ const AuthStatus = () => {
           <DropdownMenu.Label>
             <Text size="2">{session!.user!.email}</Text>
           </DropdownMenu.Label>
-          <DropdownMenu.Item>
-            <Link href="/api/auth/signout">Log out</Link>
-          </DropdownMenu.Item>
+          {user && (
+            <Link href={`/users/${user.id}`}>
+              <DropdownMenu.Item className="cursor-pointer">
+                Профиль
+              </DropdownMenu.Item>
+            </Link>
+          )}
+          <Link href="/api/auth/signout">
+            <DropdownMenu.Item className="cursor-pointer">
+              Выйти
+            </DropdownMenu.Item>
+          </Link>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     </Box>

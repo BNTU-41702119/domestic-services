@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-const AssigneeSelect = ({ issue }: { issue: Issue }) => {
+const AssigneeSelect = ({ user: currentUser, issue }: { user: User; issue: Issue }) => {
   const { data: users, error, isLoading } = useUsers();
 
   if (isLoading) return <Skeleton />;
@@ -20,7 +20,7 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
         assignedToUserId: userId || null,
       })
       .catch(() => {
-        toast.error("Changes could not be saved.");
+        toast.error("Изменения не могут быть сохранены.");
       });
   };
 
@@ -30,12 +30,12 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
         defaultValue={issue.assignedToUserId || ""}
         onValueChange={assignIssue}
       >
-        <Select.Trigger placeholder="Assign..." />
+        <Select.Trigger placeholder="Назначить..." />
         <Select.Content>
           <Select.Group>
-            <Select.Label>Suggestions</Select.Label>
-            <Select.Item value="">Unassigned</Select.Item>
-            {users?.map((user) => (
+            <Select.Label>Предложения</Select.Label>
+            <Select.Item value="">Не назначен</Select.Item>
+            {users?.filter((user) => user.id !== currentUser.id).map((user) => (
               <Select.Item key={user.id} value={user.id}>
                 {user.name}
               </Select.Item>

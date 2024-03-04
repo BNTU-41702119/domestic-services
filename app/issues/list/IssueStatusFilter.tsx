@@ -6,10 +6,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 const statuses: { label: string; value?: Status }[] = [
-  { label: 'All' },
-  { label: 'Open', value: 'OPEN' },
-  { label: 'In Progress', value: 'IN_PROGRESS' },
-  { label: 'Closed', value: 'CLOSED' },
+  { label: 'Все' },
+  { label: 'Открыте', value: 'OPEN' },
+  { label: 'В Процессе', value: 'IN_PROGRESS' },
+  { label: 'Закрытые', value: 'CLOSED' },
 ];
 
 const IssueStatusFilter = () => {
@@ -24,16 +24,18 @@ const IssueStatusFilter = () => {
         if (status) params.append('status', status);
         if (searchParams.get('orderBy'))
           params.append('orderBy', searchParams.get('orderBy')!);
+        if (searchParams.get('ownership'))
+          params.append('ownership', searchParams.get('ownership')!);
 
         const query = params.size ? '?' + params.toString() : '';
         router.push('/issues/list' + query);
       }}
     >
-      <Select.Trigger placeholder="Filter by status..." />
+      <Select.Trigger placeholder="Фильтр по статусу..." />
       <Select.Content>
         {statuses.map((status) => (
           <Select.Item
-            key={status.value}
+            key={status.value || ''}
             value={status.value || ''}
           >
             {status.label}

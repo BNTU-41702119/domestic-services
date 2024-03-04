@@ -28,25 +28,24 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
       <AlertDialog.Root>
         <AlertDialog.Trigger>
           <Button color="red" disabled={isDeleting}>
-            Delete Issue
+            Удалить Заказ
             {isDeleting && <Spinner />}
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Content>
-          <AlertDialog.Title>Confirm Deletion</AlertDialog.Title>
+          <AlertDialog.Title>Подтвердить Удаление</AlertDialog.Title>
           <AlertDialog.Description>
-            Are you sure you want to delete this issue? This action cannot be
-            undone.
+            Вы правда хотите удалить заказ? Это событие не может быть отменено.
           </AlertDialog.Description>
           <Flex mt="4" gap="3" justify="end">
             <AlertDialog.Cancel>
               <Button variant="soft" color="gray">
-                Cancel
+                Отменить
               </Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action>
               <Button color="red" onClick={deleteIssue}>
-                Delete Issue
+                Удилить Заказ
               </Button>
             </AlertDialog.Action>
           </Flex>
@@ -54,9 +53,9 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
       </AlertDialog.Root>
       <AlertDialog.Root open={error}>
         <AlertDialog.Content>
-          <AlertDialog.Title>Error</AlertDialog.Title>
+          <AlertDialog.Title>Ошибка</AlertDialog.Title>
           <AlertDialog.Description>
-            This issue could not be deleted.
+            Этот заказ не может быть удален.
           </AlertDialog.Description>
           <Button
             color="gray"
@@ -64,7 +63,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
             mt="2"
             onClick={() => setError(false)}
           >
-            OK
+            Закрыть
           </Button>
         </AlertDialog.Content>
       </AlertDialog.Root>

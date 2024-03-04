@@ -15,13 +15,13 @@ const IssueSummary = ({ open, inProgress, closed }: Props) => {
     value: number;
     status: Status;
   }[] = [
-    { label: 'Open Issues', value: open, status: 'OPEN' },
+    { label: 'Открытые Заказы', value: open, status: 'OPEN' },
     {
-      label: 'In-progress Issues',
+      label: 'Заказы В Процессе',
       value: inProgress,
       status: 'IN_PROGRESS',
     },
-    { label: 'Closed Issues', value: closed, status: 'CLOSED' },
+    { label: 'Закрытые Заказы', value: closed, status: 'CLOSED' },
   ];
 
   return (

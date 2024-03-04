@@ -9,7 +9,7 @@ const IssueForm = dynamic(
   }
 );
 
-const NewIssuePage = () => {
+const NewIssuePage = async () => {
   return (
     <IssueForm />
   )

@@ -1,43 +1,59 @@
-import prisma from '@/prisma/client';
-import IssueSummary from './IssueSummary';
-import LatestIssues from './LatestIssues';
-import IssueChart from './IssueChart';
-import { Flex, Grid } from '@radix-ui/themes';
 import { Metadata } from 'next';
 
-export default async function Home() {
-  const open = await prisma.issue.count({
-    where: { status: 'OPEN' },
-  });
-  const inProgress = await prisma.issue.count({
-    where: { status: 'IN_PROGRESS' },
-  });
-  const closed = await prisma.issue.count({
-    where: { status: 'CLOSED' },
-  });
+import Hero from "./components/hero";
+import SectionTitle from "./components/sectionTitle";
 
+import { benefitOne, benefitTwo } from "./components/data";
+import Video from "./components/video";
+import Benefits from "./components/benefits";
+import Footer from "./components/footer";
+import Testimonials from "./components/testimonials";
+import Faq from "./components/faq";
+import PopupWidget from "./components/popupWidget";
+
+const Home = () => {
   return (
-    <Grid columns={{ initial: '1', md: '2' }} gap="5">
-      <Flex direction="column" gap="5">
-        <IssueSummary
-          open={open}
-          inProgress={inProgress}
-          closed={closed}
-        />
-        <IssueChart
-          open={open}
-          inProgress={inProgress}
-          closed={closed}
-        />
-      </Flex>
-      <LatestIssues />
-    </Grid>
+    <>
+      <Hero />
+      <SectionTitle
+        pretitle="Плюсы"
+        title="Почему использовать именно наше приложение">
+        Мы гарантируем качество, безопасность и конфиденциальность каждого заказа.
+        Наше приложение - это ваш надежный помощник по дому!
+      </SectionTitle>
+      <Benefits data={benefitOne} />
+      <Benefits imgPos="right" data={benefitTwo} />
+      <SectionTitle
+        pretitle="Посмотри видео"
+        title="Научись исполнять свои желания">
+        Вы хотите сделать свою жизнь проще и комфортнее? Вы хотите избавиться от
+        хлопот и забот по дому? Вы хотите найти лучшего специалиста для любой
+        домашней задачи? Тогда наше приложение для вас!
+      </SectionTitle>
+      <Video />
+      <SectionTitle
+        pretitle="Отзывы"
+        title="Что говорят наши клиенты">
+        Мы очень ценим каждого клиента и всегда рады получить отзывы о нашей
+        работе. Ваше мнение очень важно для нас!
+      </SectionTitle>
+      <Testimonials />
+      <SectionTitle pretitle="Вопрос/Ответ" title="Часто задаваемые вопросы">
+        Здесь мы ответим на часто задаваемые вопросы. Если у вас остались
+        вопросы, вы всегда можете связаться с нами.
+      </SectionTitle>
+      <Faq />
+      <Footer />
+      <PopupWidget />
+    </>
   );
-}
+};
 
 export const dynamic = 'force-dynamic'; 
 
 export const metadata: Metadata = {
-  title: 'Issue Tracker - Dashboard',
-  description: 'View a summary of project issues'
+  title: 'Domestic service - Главная',
+  description: 'Домашняя страница приложения для бытовых задач'
 };
+
+export default Home;

@@ -4,12 +4,12 @@ import ErrorMessage from '@/app/components/ErrorMessage';
 import Spinner from '@/app/components/Spinner';
 import { issueSchema } from '@/app/validationSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Issue } from '@prisma/client';
+import { Issue, User } from '@prisma/client';
 import { Button, Callout, TextField } from '@radix-ui/themes';
 import axios from 'axios';
 import 'easymde/dist/easymde.min.css';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import SimpleMDE from 'react-simplemde-editor';
 import { z } from 'zod';
@@ -32,15 +32,20 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setSubmitting(true);
-      if (issue) await axios.patch('/api/issues/' + issue.id, data);
-      else await axios.post('/api/issues', data);
+      if (issue) {
+        await axios.patch('/api/issues/' + issue.id, data);
+      } else {
+        await axios.post('/api/issues', data);
+      }
       router.push('/issues/list');
       router.refresh();
     } catch (error) {
       setSubmitting(false);
-      setError('An unexpected error occurred.');
+      setError('Возникла непредвиденная ошибка.');
     }
   });
+
+  const mdeOptions = useMemo(() => ({ spellChecker: false }), []);
 
   return (
     <div className="max-w-xl">
@@ -53,22 +58,45 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         <TextField.Root>
           <TextField.Input
             defaultValue={issue?.title}
-            placeholder="Title"
+            placeholder="Название"
             {...register('title')}
           />
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
+
+        <TextField.Root>
+          <TextField.Input
+            defaultValue={issue?.address}
+            placeholder="Адрес"
+            {...register('address')}
+          />
+        </TextField.Root>
+        <ErrorMessage>{errors.address?.message}</ErrorMessage>
+
+        <TextField.Root>
+          <TextField.Input
+            defaultValue={issue?.phoneNumber}
+            placeholder="Номер телефона"
+            {...register('phoneNumber')}
+          />
+        </TextField.Root>
+        <ErrorMessage>{errors.phoneNumber?.message}</ErrorMessage>
+        
         <Controller
           name="description"
           control={control}
           defaultValue={issue?.description}
           render={({ field }) => (
-            <SimpleMDE placeholder="Description" {...field} />
+            <SimpleMDE
+              placeholder="Описание"
+              options={mdeOptions}
+              {...field}
+            />
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>
-          {issue ? 'Update Issue' : 'Submit New Issue'}{' '}
+          {issue ? 'Обновить Заказ' : 'Создать Заказ'}{' '}
           {isSubmitting && <Spinner />}
         </Button>
       </form>

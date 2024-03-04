@@ -12,14 +12,31 @@ datasource db {
 }
 
 model Issue {
-  id               Int      @id @default(autoincrement())
-  title            String   @db.VarChar(255)
-  description      String   @db.Text
-  status           Status   @default(OPEN)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  assignedToUserId String?  @db.VarChar(255)
-  assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id])
+  id               Int        @id @default(autoincrement())
+  title            String     @db.VarChar(255)
+  address          String     @db.VarChar(255)
+  phoneNumber      String     @db.VarChar(255)
+  description      String     @db.Text
+  status           Status     @default(OPEN)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  userCreatedId    String     @db.VarChar(255)
+  userCreated      User       @relation(name: "UserCreated", fields: [userCreatedId], references: [id])
+  assignedToUserId String?    @db.VarChar(255)
+  assignedToUser   User?      @relation(name: "AssignedToUser", fields: [assignedToUserId], references: [id])
+  assignedRequests Request[]  @relation(name: "AssignedToIssue")
+}
+
+model Request {
+  id                Int      @id @default(autoincrement())
+  price             Decimal  @db.Decimal(10, 2)
+  description       String   @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  userCreatedId     String   @db.VarChar(255)
+  userCreated       User     @relation(name: "RequestCreated", fields: [userCreatedId], references: [id])
+  assignedToIssueId Int      @db.Int
+  assignedToIssue   Issue    @relation(name: "AssignedToIssue", fields: [assignedToIssueId], references: [id])
 }
 
 enum Status {
@@ -56,14 +73,16 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  assignedIssues Issue[]
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  assignedIssues  Issue[]   @relation(name: "UserCreated")
+  createdIssues   Issue[]   @relation(name: "AssignedToUser")
+  createdRequests Request[] @relation(name: "RequestCreated")
 }
 
 model VerificationToken {

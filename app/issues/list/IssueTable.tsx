@@ -4,21 +4,22 @@ import { Table } from '@radix-ui/themes'
 import Link from 'next/link'
 import React from 'react'
 import NextLink from 'next/link';
-import { Issue, Status } from '@prisma/client'
+import { Issue, Request, Status, User } from '@prisma/client'
 
 export interface IssueQuery {
   status: Status;
+  ownership: 'my' | 'unassigned' | 'assigned';
   orderBy: keyof Issue;
   page: string;
 }
 
 interface Props { 
-  searchParams: IssueQuery,
-  issues: Issue[]
+  searchParams: IssueQuery;
+  user?: User;
+  issues: (Issue & { assignedRequests: Request[] })[];
 }
 
-const IssueTable = ({ searchParams, issues }: Props) => {
-
+const IssueTable = ({ searchParams, user, issues }: Props) => {
   return (
     <Table.Root variant="surface">
         <Table.Header>
@@ -30,7 +31,7 @@ const IssueTable = ({ searchParams, issues }: Props) => {
               >
                 <NextLink
                   href={{
-                    query: {
+                    query: column.value === 'requests' ? { ...searchParams } : {
                       ...searchParams,
                       orderBy: column.value,
                     },
@@ -60,6 +61,9 @@ const IssueTable = ({ searchParams, issues }: Props) => {
                 <IssueStatusBadge status={issue.status} />
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
+                {issue.assignedRequests.length}
+              </Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
                 {issue.createdAt.toDateString()}
               </Table.Cell>
             </Table.Row>
@@ -71,17 +75,22 @@ const IssueTable = ({ searchParams, issues }: Props) => {
 
 const columns: {
   label: string;
-  value: keyof Issue;
+  value: keyof Issue | 'requests';
   className?: string;
 }[] = [
-  { label: 'Issue', value: 'title' },
+  { label: 'Заказ', value: 'title' },
   {
-    label: 'Status',
+    label: 'Статус',
     value: 'status',
     className: 'hidden md:table-cell',
   },
   {
-    label: 'Created',
+    label: 'Запросы',
+    value: 'requests',
+    className: 'hidden md:table-cell',
+  },
+  {
+    label: 'Создано',
     value: 'createdAt',
     className: 'hidden md:table-cell',
   },
